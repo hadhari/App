@@ -1,0 +1,11 @@
+{
+  "name": "Daily Routine — Hadhari",
+  "short_name": "Routine",
+  "icons": [
+    { "src": "logo.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "start_url": "/App/",
+  "display": "standalone",
+  "background_color": "#1A7A6E",
+  "theme_color": "#1A7A6E"
+}

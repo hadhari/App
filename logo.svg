@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="256" fill="#1A7A6E"/>
+
+  <!-- Crescent moon -->
+  <circle cx="256" cy="256" r="130" fill="white"/>
+  <circle cx="306" cy="210" r="110" fill="#1A7A6E"/>
+
+  <!-- Star -->
+  <polygon points="330,256 340,228 350,256 378,256 356,273 364,301 340,284 316,301 324,273 302,256"
+           fill="white"/>
+</svg>
