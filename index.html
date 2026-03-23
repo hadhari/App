@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Daily Routine — Hadhari</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #1A7A6E;
+    --teal-light: #2AA190;
+    --teal-pale: #E8F5F3;
+    --teal-mid: #B2DFDB;
+    --gold: #C9A84C;
+    --gold-light: #F5EDD5;
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --text: #1C1C1C;
+    --muted: #7A7A7A;
+    --border: #E8E5DF;
+    --shadow: 0 2px 20px rgba(26,122,110,0.08);
+
+    --fajr: #E8F5F3;
+    --morning: #FFF8E7;
+    --midday: #FFF3E0;
+    --work: #EAF0FB;
+    --evening: #F3EAF7;
+
+    --fajr-accent: #1A7A6E;
+    --morning-accent: #C9A84C;
+    --midday-accent: #E07A30;
+    --work-accent: #3B6FD4;
+    --evening-accent: #7B4FA0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* Header */
+  .header {
+    background: var(--teal);
+    padding: 28px 20px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 40px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    margin-top: 4px;
+    font-weight: 300;
+  }
+  .day-badge {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+  .day-badge.inactive {
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    height: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 8px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+  }
+  .progress-count { font-weight: 600; color: #fff; }
+
+  /* Reset banner */
+  .reset-banner {
+    background: var(--gold-light);
+    border-left: 3px solid var(--gold);
+    padding: 10px 16px;
+    font-size: 13px;
+    color: #7A5A00;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    display: none;
+  }
+  .reset-btn-small {
+    background: var(--gold);
+    color: white;
+    border: none;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* Weekend notice */
+  .weekend-notice {
+    margin: 20px 16px;
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    display: none;
+  }
+  .weekend-emoji { font-size: 48px; margin-bottom: 12px; }
+  .weekend-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--teal);
+    margin-bottom: 8px;
+  }
+  .weekend-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* Content */
+  .content { padding: 16px; }
+
+  /* Section */
+  .section { margin-bottom: 12px; }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 12px;
+    border-radius: 14px 14px 0 0;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.2s;
+  }
+  .section-header:active { opacity: 0.8; }
+  .section-icon { font-size: 20px; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 700;
+    flex: 1;
+  }
+  .section-meta {
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+  .section-chevron {
+    font-size: 12px;
+    opacity: 0.6;
+    transition: transform 0.3s;
+  }
+  .section.collapsed .section-chevron { transform: rotate(-90deg); }
+
+  .section-body {
+    background: var(--surface);
+    border-radius: 0 0 14px 14px;
+    overflow: hidden;
+    transition: max-height 0.35s cubic-bezier(0.4,0,0.2,1);
+    max-height: 2000px;
+  }
+  .section.collapsed .section-body { max-height: 0; }
+
+  /* Checklist item */
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    user-select: none;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:active { background: var(--teal-pale); }
+
+  .item-check {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    font-size: 13px;
+    color: transparent;
+  }
+  .item.done .item-check {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: white;
+  }
+
+  .item-body { flex: 1; min-width: 0; }
+  .item-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    transition: color 0.2s;
+    line-height: 1.3;
+  }
+  .item.done .item-name {
+    color: var(--muted);
+    text-decoration: line-through;
+    text-decoration-color: var(--teal-mid);
+  }
+  .item-time {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+  .item-tip {
+    font-size: 11px;
+    color: var(--teal);
+    margin-top: 3px;
+    font-weight: 500;
+  }
+
+  /* Completion card */
+  .completion {
+    background: var(--teal);
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    margin-top: 16px;
+    display: none;
+    animation: fadeUp 0.5s ease;
+  }
+  .completion-emoji { font-size: 40px; margin-bottom: 10px; }
+  .completion-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .completion-sub { font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+
+  /* Daily check-in */
+  .checkin {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 20px;
+    margin-top: 12px;
+    border: 2px solid var(--teal-mid);
+  }
+  .checkin-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    color: var(--teal);
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .checkin-q {
+    font-size: 13px;
+    color: var(--text);
+    text-align: center;
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    padding: 0 8px;
+  }
+  .checkin-dots {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  .checkin-dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .dot-circle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: var(--bg);
+  }
+  .dot-circle.active {
+    background: var(--teal);
+    border-color: var(--teal);
+  }
+  .dot-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  /* Reset button */
+  .reset-wrap { text-align: center; margin-top: 20px; }
+  .reset-full-btn {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    padding: 10px 24px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .reset-full-btn:active { background: var(--border); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .item { animation: fadeUp 0.3s ease both; }
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="header-title">Daily Routine</div>
+      <div class="header-sub" id="dateLabel"></div>
+    </div>
+    <div class="day-badge" id="dayBadge"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span>Today's progress</span>
+    <span><span class="progress-count" id="doneCount">0</span> / <span id="totalCount">0</span> done</span>
+  </div>
+</div>
+
+<div class="reset-banner" id="resetBanner">
+  New day! Ready to start fresh?
+  <button class="reset-btn-small" onclick="resetAll()">Reset</button>
+</div>
+
+<div class="weekend-notice" id="weekendNotice">
+  <div class="weekend-emoji">🌴</div>
+  <div class="weekend-title">Rest Day</div>
+  <div class="weekend-sub">It's Friday or Saturday — your off days.<br>Rest, recharge, and enjoy your time.</div>
+</div>
+
+<div class="content" id="mainContent">
+
+  <!-- Sections will be rendered by JS -->
+
+</div>
+
+<script>
+const SECTIONS = [
+  {
+    id: 'fajr',
+    icon: '🌙',
+    title: 'Early Morning',
+    sub: 'Spiritual Foundation',
+    color: '#E8F5F3',
+    accent: '#1A7A6E',
+    items: [
+      { id: 'f1', name: 'Fajr prayer', time: '5:00 AM', tip: 'Start the day with Allah.' },
+      { id: 'f2', name: 'Quran & dhikr', time: '5:20 AM' },
+      { id: 'f3', name: 'Run or workout', time: '5:45 AM', tip: 'Cool air, empty streets — best time.' },
+      { id: 'f4', name: 'Shower & freshen up', time: '6:45 AM' },
+    ]
+  },
+  {
+    id: 'morning',
+    icon: '🌅',
+    title: 'Morning',
+    sub: 'Win the Day',
+    color: '#FFF8E7',
+    accent: '#C9A84C',
+    items: [
+      { id: 'm1', name: 'Breakfast — calm, no scrolling', time: '7:15 AM' },
+      { id: 'm2', name: 'MBA studies (90 min)', time: '7:45 AM', tip: 'Brain is sharpest now.' },
+      { id: 'm3', name: 'Personal finance / side projects', time: '9:15 AM' },
+    ]
+  },
+  {
+    id: 'midday',
+    icon: '☀️',
+    title: 'Midday Reset',
+    sub: 'Before Work',
+    color: '#FFF3E0',
+    accent: '#E07A30',
+    items: [
+      { id: 'md1', name: 'Qailulah — short nap (20–30 min)', time: '10:30 AM', tip: 'Sunnah before Dhuhr.' },
+      { id: 'md2', name: 'Wake up & freshen up', time: '11:00 AM' },
+      { id: 'md3', name: 'Lunch', time: '11:30 AM' },
+      { id: 'md4', name: 'Dhuhr prayer', time: '12:30 PM' },
+    ]
+  },
+  {
+    id: 'work',
+    icon: '💻',
+    title: 'Work Block',
+    sub: '1:00 PM – 9:00 PM',
+    color: '#EAF0FB',
+    accent: '#3B6FD4',
+    items: [
+      { id: 'w1', name: 'Start work — plan your session', time: '1:00 PM' },
+      { id: 'w2', name: 'Deep work — SQL, dashboards', time: '1:00 – 4:00 PM' },
+      { id: 'w3', name: 'Asr prayer', time: '4:00 PM' },
+      { id: 'w4', name: 'Meetings, reviews, async comms', time: '4:15 – 7:00 PM' },
+      { id: 'w5', name: 'Maghrib prayer', time: '7:00 PM' },
+      { id: 'w6', name: 'Wrap up & documentation', time: '7:15 – 9:00 PM' },
+    ]
+  },
+  {
+    id: 'evening',
+    icon: '🌙',
+    title: 'Evening',
+    sub: 'Protect the Night',
+    color: '#F3EAF7',
+    accent: '#7B4FA0',
+    items: [
+      { id: 'e1', name: 'Log off — hard stop 🛑', time: '9:00 PM', tip: 'Non-negotiable.' },
+      { id: 'e2', name: 'Dinner', time: '9:15 PM' },
+      { id: 'e3', name: 'Time with Cindy', time: '9:45 PM', tip: 'Protected slot, not leftover time.' },
+      { id: 'e4', name: 'Wind down — journal & reflect', time: '10:30 PM' },
+      { id: 'e5', name: 'Isha prayer', time: '10:45 PM' },
+      { id: 'e6', name: 'Sleep 😴', time: '11:00 PM' },
+    ]
+  }
+];
+
+const ALL_ITEMS = SECTIONS.flatMap(s => s.items.map(i => ({ ...i, section: s.id })));
+const STORAGE_KEY = 'hadhari_routine_v1';
+const DATE_KEY = 'hadhari_routine_date';
+
+function getStorageKey() {
+  return STORAGE_KEY + '_' + getTodayStr();
+}
+
+function getTodayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(getStorageKey());
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function saveState(state) {
+  try {
+    localStorage.setItem(getStorageKey(), JSON.stringify(state));
+    // Clean old keys
+    for (let k of Object.keys(localStorage)) {
+      if (k.startsWith(STORAGE_KEY) && k !== getStorageKey()) {
+        localStorage.removeItem(k);
+      }
+    }
+  } catch {}
+}
+
+function loadCheckin() {
+  try {
+    const raw = localStorage.getItem('hadhari_checkin_' + getTodayStr());
+    return raw ? JSON.parse(raw) : { move: false, study: false, connect: false };
+  } catch { return { move: false, study: false, connect: false }; }
+}
+
+function saveCheckin(ci) {
+  try { localStorage.setItem('hadhari_checkin_' + getTodayStr(), JSON.stringify(ci)); } catch {}
+}
+
+let state = loadState();
+let checkin = loadCheckin();
+let collapsed = {};
+
+function isWorkday() {
+  const day = new Date().getDay(); // 0=Sun,1=Mon,...,6=Sat
+  return day !== 5 && day !== 6; // Fri=5, Sat=6 are off
+}
+
+function getDayLabel() {
+  const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  return days[new Date().getDay()];
+}
+
+function getDateLabel() {
+  return new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function getDoneCount() {
+  return ALL_ITEMS.filter(i => state[i.id]).length;
+}
+
+function updateProgress() {
+  const done = getDoneCount();
+  const total = ALL_ITEMS.length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+
+  // Show completion
+  const comp = document.getElementById('completionCard');
+  if (comp) comp.style.display = done === total ? 'block' : 'none';
+}
+
+function toggleItem(id) {
+  state[id] = !state[id];
+  saveState(state);
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) {
+    el.classList.toggle('done', state[id]);
+    const check = el.querySelector('.item-check');
+    check.textContent = state[id] ? '✓' : '';
+  }
+  updateProgress();
+}
+
+function toggleSection(id) {
+  collapsed[id] = !collapsed[id];
+  const sec = document.querySelector(`[data-section="${id}"]`);
+  if (sec) sec.classList.toggle('collapsed', collapsed[id]);
+}
+
+function resetAll() {
+  state = {};
+  saveState(state);
+  checkin = { move: false, study: false, connect: false };
+  saveCheckin(checkin);
+  render();
+}
+
+function toggleCheckin(key) {
+  checkin[key] = !checkin[key];
+  saveCheckin(checkin);
+  const dot = document.querySelector(`[data-dot="${key}"]`);
+  if (dot) dot.classList.toggle('active', checkin[key]);
+}
+
+function render() {
+  document.getElementById('dateLabel').textContent = getDateLabel();
+  const badge = document.getElementById('dayBadge');
+  const dayLabel = getDayLabel();
+
+  if (!isWorkday()) {
+    badge.textContent = dayLabel;
+    badge.classList.add('inactive');
+    document.getElementById('weekendNotice').style.display = 'block';
+    document.getElementById('mainContent').style.display = 'none';
+    return;
+  }
+
+  badge.textContent = dayLabel;
+  badge.classList.remove('inactive');
+
+  const content = document.getElementById('mainContent');
+  content.innerHTML = '';
+
+  SECTIONS.forEach(sec => {
+    const doneInSection = sec.items.filter(i => state[i.id]).length;
+    const isCol = collapsed[sec.id] || false;
+
+    const secEl = document.createElement('div');
+    secEl.className = 'section' + (isCol ? ' collapsed' : '');
+    secEl.setAttribute('data-section', sec.id);
+
+    secEl.innerHTML = `
+      <div class="section-header" style="background:${sec.color}" onclick="toggleSection('${sec.id}')">
+        <span class="section-icon">${sec.icon}</span>
+        <div style="flex:1">
+          <div class="section-title" style="color:${sec.accent}">${sec.title}</div>
+          <div style="font-size:11px;color:${sec.accent};opacity:0.7;font-weight:500">${sec.sub}</div>
+        </div>
+        <span class="section-meta" style="color:${sec.accent}">${doneInSection}/${sec.items.length}</span>
+        <span class="section-chevron" style="color:${sec.accent}">▾</span>
+      </div>
+      <div class="section-body">
+        ${sec.items.map((item, idx) => `
+          <div class="item ${state[item.id] ? 'done' : ''}" data-id="${item.id}"
+               onclick="toggleItem('${item.id}')"
+               style="animation-delay:${idx * 40}ms">
+            <div class="item-check">${state[item.id] ? '✓' : ''}</div>
+            <div class="item-body">
+              <div class="item-name">${item.name}</div>
+              <div class="item-time">${item.time}</div>
+              ${item.tip ? `<div class="item-tip">✦ ${item.tip}</div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    content.appendChild(secEl);
+  });
+
+  // Completion card
+  const done = getDoneCount();
+  const total = ALL_ITEMS.length;
+  const compEl = document.createElement('div');
+  compEl.className = 'completion';
+  compEl.id = 'completionCard';
+  compEl.style.display = done === total ? 'block' : 'none';
+  compEl.innerHTML = `
+    <div class="completion-emoji">🌟</div>
+    <div class="completion-title">Day Complete, Alhamdulillah!</div>
+    <div class="completion-sub">You moved, you studied, you connected.<br>That's a great day.</div>
+  `;
+  content.appendChild(compEl);
+
+  // Daily check-in
+  const ciEl = document.createElement('div');
+  ciEl.className = 'checkin';
+  ciEl.innerHTML = `
+    <div class="checkin-title">Daily Check-In</div>
+    <div class="checkin-q">"Did I move, study, and connect with someone I care about?"</div>
+    <div class="checkin-dots">
+      <div class="checkin-dot">
+        <div class="dot-circle ${checkin.move ? 'active' : ''}" data-dot="move" onclick="toggleCheckin('move')">🏃</div>
+        <div class="dot-label">Moved</div>
+      </div>
+      <div class="checkin-dot">
+        <div class="dot-circle ${checkin.study ? 'active' : ''}" data-dot="study" onclick="toggleCheckin('study')">📚</div>
+        <div class="dot-label">Studied</div>
+      </div>
+      <div class="checkin-dot">
+        <div class="dot-circle ${checkin.connect ? 'active' : ''}" data-dot="connect" onclick="toggleCheckin('connect')">💚</div>
+        <div class="dot-label">Connected</div>
+      </div>
+    </div>
+  `;
+  content.appendChild(ciEl);
+
+  // Reset button
+  const resetEl = document.createElement('div');
+  resetEl.className = 'reset-wrap';
+  resetEl.innerHTML = `<button class="reset-full-btn" onclick="resetAll()">↺ Reset today's checklist</button>`;
+  content.appendChild(resetEl);
+
+  updateProgress();
+}
+
+render();
+</script>
+
+</body>
+</html>
